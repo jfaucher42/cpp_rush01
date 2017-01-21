@@ -148,9 +148,9 @@ void	part2()
 
 	std::cout << std::hex << std::showbase
 			  << "RAM usage:" << std::endl
-			  << "Total: " << ram_size << std::endl
-			  << "Available: " << ram_size - used_ram << std::endl
-			  << "Used: " << used_ram << std::endl
+			  << "Total: " << ram_size / (1024 * 1024) << std::endl
+			  << "Available: " << (ram_size - used_ram) / (1024 * 1024) << std::endl
+			  << "Used: " << used_ram / (1024 * 1024) << std::endl
 			  << std::dec;
 
 	get_CPU_load(cpu_usage);
