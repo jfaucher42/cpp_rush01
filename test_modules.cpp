@@ -137,17 +137,17 @@ void	part2()
 
 	use_sysctl("vm.swapusage", vm_usage);
 	std::cout << std::hex << std::showbase
-			  << "Virtual memory usage:" << std::endl
-			  << "Total: " << vm_usage.xsu_total << std::endl
-			  << "Available: " << vm_usage.xsu_avail << std::endl
-			  << "Used: " << vm_usage.xsu_used << std::endl
+			  << "Virtual memory usage (in Mb):" << std::endl
+			  << "Total: " << vm_usage.xsu_total / (1024 * 1024) << std::endl
+			  << "Available: " << vm_usage.xsu_avail / (1024 * 1024) << std::endl
+			  << "Used: " << vm_usage.xsu_used / (1024 * 1024) << std::endl
 			  << std::dec;
 
 	use_sysctl("hw.memsize", ram_size);
 	used_ram = get_used_RAM();
 
 	std::cout << std::hex << std::showbase
-			  << "RAM usage:" << std::endl
+			  << "RAM usage (in Mb):" << std::endl
 			  << "Total: " << ram_size / (1024 * 1024) << std::endl
 			  << "Available: " << (ram_size - used_ram) / (1024 * 1024) << std::endl
 			  << "Used: " << used_ram / (1024 * 1024) << std::endl
