@@ -124,7 +124,7 @@ void	part2()
 	struct clockinfo	clockinfo;
 	struct xsw_usage	vm_usage;
 	char				model[1024];
-	t_cpu_usage			actual;
+	t_cpu_usage			cpu_usage;
 
 	use_sysctl("hw.activecpu", activecpu);
 	std::cout << "Active cpu: " << activecpu << std::endl;
@@ -147,26 +147,25 @@ void	part2()
 	used_ram = get_used_RAM();
 
 	std::cout << std::hex << std::showbase
-			  << "Free RAM: " << ram_size - used_ram << std::endl
-			  << "Used RAM: " << used_ram << std::endl
-			  << "Size RAM: " << ram_size << std::endl
+			  << "RAM usage:" << std::endl
+			  << "Total: " << ram_size << std::endl
+			  << "Available: " << ram_size - used_ram << std::endl
+			  << "Used: " << used_ram << std::endl
 			  << std::dec;
 
-	get_CPU_load(actual);
+	get_CPU_load(cpu_usage);
 
-	{
-		uint64_t total = actual.total_system_time + actual.total_user_time + actual.total_idle_time;
+	uint64_t total = cpu_usage.total_system_time + cpu_usage.total_user_time + cpu_usage.total_idle_time;
 
-		double one_percent = static_cast<double>(total) / 100.0;
+	double one_percent = static_cast<double>(total) / 100.0;
 
-		std::cout << "Total: " << total << std::endl;
-		std::cout << "One percent: " << one_percent << std::endl;
+	std::cout << "Total: " << total << std::endl;
+	std::cout << "One percent: " << one_percent << std::endl;
 
-		std::cout << "CPU usage:" << std::endl
-				  << "System: " << static_cast<double>(actual.total_system_time) / one_percent << "%" << std::endl
-				  << "User: " << static_cast<double>(actual.total_user_time) / one_percent << "%" << std::endl
-				  << "Idle: " << static_cast<double>(actual.total_idle_time) / one_percent << "%" << std::endl;
-	}
+	std::cout << "CPU usage:" << std::endl
+			  << "System: " << static_cast<double>(cpu_usage.total_system_time) / one_percent << "%" << std::endl
+			  << "User: " << static_cast<double>(cpu_usage.total_user_time) / one_percent << "%" << std::endl
+			  << "Idle: " << static_cast<double>(cpu_usage.total_idle_time) / one_percent << "%" << std::endl;
 
 }
 
@@ -177,17 +176,18 @@ void	part2()
 #include <sys/sysctl.h>
 #include <net/if.h>
 #include <net/route.h>
+#include <cstring>
 
 typedef struct		s_network_data
 {
-	u_int64_t		ibytes;
-	u_int64_t		obytes;
-	u_int64_t		ipackets;
-	u_int64_t		opackets;
+	long double		ibytes;
+	long double		obytes;
+	long double		ipackets;
+	long double		opackets;
 }					t_network_data;
 
 template<typename T>
-void	network(t_network_data &network_data)
+void	network(t_network_data &network_data, int wanted_list, unsigned char info)
 {
 	size_t			len;
 	T				*msghdr;
@@ -196,7 +196,7 @@ void	network(t_network_data &network_data)
 		PF_ROUTE,
 		0,
 		0,
-		NET_RT_IFLIST,
+		wanted_list,
 		0
 	};
 
@@ -208,49 +208,64 @@ void	network(t_network_data &network_data)
 	{
 		msghdr = reinterpret_cast<T*>(next);
 
-		if (msghdr->ifm_type == RTM_IFINFO)
+		if (msghdr->ifm_type == info)
 		{
-			network_data.ibytes += static_cast<u_int64_t>(msghdr->ifm_data.ifi_ibytes);
-			network_data.obytes += static_cast<u_int64_t>(msghdr->ifm_data.ifi_obytes);
-			network_data.ipackets += static_cast<u_int64_t>(msghdr->ifm_data.ifi_ipackets);
-			network_data.ipackets += static_cast<u_int64_t>(msghdr->ifm_data.ifi_imcasts);
-			network_data.opackets += static_cast<u_int64_t>(msghdr->ifm_data.ifi_opackets);
-			network_data.opackets += static_cast<u_int64_t>(msghdr->ifm_data.ifi_omcasts);
+			network_data.ibytes += static_cast<long double>(msghdr->ifm_data.ifi_ibytes);
+			network_data.obytes += static_cast<long double>(msghdr->ifm_data.ifi_obytes);
+			network_data.ipackets += static_cast<long double>(msghdr->ifm_data.ifi_ipackets);
+			//network_data.ipackets += static_cast<long double>(msghdr->ifm_data.ifi_imcasts);
+			network_data.opackets += static_cast<long double>(msghdr->ifm_data.ifi_opackets);
+			//network_data.opackets += static_cast<long double>(msghdr->ifm_data.ifi_omcasts);
 		}
 
 	}
 	delete[] data;
 }
 
-void	part3(void)
+void	part3(t_network_data &saved)
 {
-	t_network_data		saved = {0, 0, 0, 0};
 	t_network_data		network_data = {0, 0, 0, 0};
 
-	network<struct if_msghdr>(network_data);
-	network<struct if_msghdr2>(network_data);
+	network<struct if_msghdr>(network_data, NET_RT_IFLIST, RTM_IFINFO);
+	network<struct if_msghdr2>(network_data, NET_RT_IFLIST2, RTM_IFINFO2);
 
 	std::cout << std::hex
-			  << "# of received bytes: " << ibytes << std::endl
-			  << "# of sent bytes: " << obytes << std::endl
-			  << "# of received packets: " << ipackets << std::endl
-			  << "# of sent packets: " << opackets << std::endl;
+			  << "# of received Kb per s: " << (network_data.ibytes - saved.ibytes) / 1024 << std::endl
+			  << "# of sent Kb per s: " << (network_data.obytes - saved.obytes) / 1024 << std::endl
+			  << "# of received packets per s: " << network_data.ipackets - saved.ipackets << std::endl
+			  << "# of sent packets per s: " << network_data.opackets - saved.opackets << std::endl;
+	std::cout << std::endl;
+
+	saved = network_data;
+
 }
 
 /* >>> */
 
 int		main()
 {
-	std::cout << "PART 1: general user / computer information" << std::endl;
-	part1();
+	t_network_data		saved = {0, 0, 0, 0};
 
-	std::cout << std::endl;
+	network<struct if_msghdr>(saved, NET_RT_IFLIST, RTM_IFINFO);
+	network<struct if_msghdr2>(saved, NET_RT_IFLIST2, RTM_IFINFO2);
+	sleep(1);
 
-	std::cout << "PART 2: CPU / RAM information" << std::endl;
-	part2();
+	while (true)
+	{
+		std::cout << "PART 1: general user / computer information" << std::endl;
+		part1();
 
-	std::cout << std::endl;
+		std::cout << std::endl;
 
-	std::cout << "PART 3: Network exchanges" << std::endl;
-	part3();
+		std::cout << "PART 2: CPU / RAM information" << std::endl;
+		part2();
+
+		std::cout << std::endl;
+
+		std::cout << "PART 3: Network exchanges" << std::endl;
+		part3(saved);
+		sleep(1);
+	}
 }
+
+// vim: set fdm=marker fmr=<<<,>>> fdl=0
