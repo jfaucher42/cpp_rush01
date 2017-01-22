@@ -36,9 +36,11 @@ OSModule::updateModule(void)
 void
 OSModule::_init(void)
 {
-	struct utsname		utsname;
+	struct utsname			utsname;
+	std::stringstream		kernel;
 
 	uname(&utsname);
+	kernel << utsname.sysname << " Kernel Version " << utsname.release;
 	this->_strings["Name"] = getOsName();
-	this->_strings["Kernel version"] = utsname.version;
+	this->_strings["Kernel version"] = kernel.str();
 }

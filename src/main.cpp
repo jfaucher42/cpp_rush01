@@ -10,6 +10,7 @@
 #include <OSModule.hpp>
 #include <RAMModule.hpp>
 #include <UserModule.hpp>
+#include <VMModule.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -22,6 +23,7 @@ static int		createModules(std::vector<IMonitorModule*>& modules)
 	modules.push_back(new OSModule);
 	modules.push_back(new RAMModule);
 	modules.push_back(new UserModule);
+	modules.push_back(new VMModule);
 	return 1;
 }
 

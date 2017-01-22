@@ -36,7 +36,7 @@ RAMModule::updateModule(void)
 
 	used_ram = get_used_RAM();
 	use_sysctl("hw.memsize", ram_size);
-	this->_numbers["RAM total size"] = ram_size / (1024 * 1024);
-	this->_numbers["RAM available"] = (ram_size - used_ram) / (1024 * 1024);
-	this->_numbers["RAM used"] = used_ram / (1024 * 1024);
+	this->_numbers["Total size"] = ram_size / (1024 * 1024);
+	this->_numbers["Available"] = (ram_size - used_ram) / (1024 * 1024);
+	this->_numbers["Used"] = used_ram / (1024 * 1024);
 }

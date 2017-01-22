@@ -1,6 +1,6 @@
 #include <NCurses.hpp>
 
-const size_t	NCurses::_titleSize = 128;
+const size_t	NCurses::_titleSize = 80;
 
 NCurses::NCurses(std::vector<IMonitorModule*>& modules):
 	_modules(modules)
@@ -11,10 +11,11 @@ NCurses::NCurses(std::vector<IMonitorModule*>& modules):
 	start_color();
 	cbreak();
 	init_color(COLOR_CYAN, 212, 212, 212);
-	init_pair(1, COLOR_CYAN, COLOR_BLACK);
-	init_pair(2, COLOR_WHITE, COLOR_BLACK);
-	init_pair(3, COLOR_YELLOW, COLOR_BLACK);
-	init_pair(4, COLOR_RED, COLOR_BLACK);
+	init_pair(1, COLOR_GREEN, COLOR_BLACK);
+	init_pair(2, COLOR_YELLOW, COLOR_BLACK);
+
+	signal(SIGWINCH, &exit);
+
 	struct winsize		winsize;
 
 	if (ioctl(1, TIOCGWINSZ, &winsize) == -1)
@@ -59,9 +60,13 @@ NCurses::launch(void)
 		{
 			IMonitorModule		*module = *it;
 
+			wattron(this->_win, COLOR_PAIR(1));
 			this->_drawName(module->getName());
+			wattron(this->_win, COLOR_PAIR(1));
+			wattron(this->_win, COLOR_PAIR(2));
 			this->_drawStrings(module->getStrings());
 			this->_drawNumbers(module->getNumbers());
+			wattron(this->_win, COLOR_PAIR(2));
 			this->_print("");
 		}
 
@@ -142,7 +147,6 @@ NCurses::_drawNumbers(std::map<std::string, long double> const &numbers)
 void
 NCurses::_updateModules(void)
 {
-	//main_out << "Updating" << std::endl;
 	for (
 			std::vector<IMonitorModule*>::const_iterator it = this->_modules.begin();
 			it != this->_modules.end();

@@ -76,4 +76,8 @@ NetworkModule::_init(void)
 	this->_save.opackets = 0;
 	this->_get_network_state<struct if_msghdr>(this->_save, NET_RT_IFLIST, RTM_IFINFO);
 	this->_get_network_state<struct if_msghdr2>(this->_save, NET_RT_IFLIST2, RTM_IFINFO2);
+	this->_numbers["# of received Kb per s"] = 0;
+	this->_numbers["# of sent Kb per s"] = 0;
+	this->_numbers["# of received packets per s"] = 0;
+	this->_numbers["# of sent packets per s"] = 0;
 }

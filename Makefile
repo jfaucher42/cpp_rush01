@@ -12,6 +12,7 @@ BASE_SRC = main.cpp \
 		   OSModule.cpp \
 		   RAMModule.cpp \
 		   UserModule.cpp \
+		   VMModule.cpp \
 \
 		   NCurses.cpp \
 			 Sfml.cpp
@@ -22,12 +23,12 @@ FLAGS = -Wall -Wextra -Werror -I $(shell pwd)/inc/ -I ~/.brew/include
 FLAGS_NC = -lncurses
 FLAGS_SFML = -L ~/.brew/lib -lsfml-system -lsfml-window -lsfml-graphics -lsfml-network -lsfml-audio -Wl,-rpath,~/.brew/opt/sfml/lib/
 
-$(NAME): build $(OBJ)
+$(NAME): $(OBJ_DIR) $(OBJ)
 	@clang++ $(FLAGS) $(FLAGS_SFML) $(FLAGS_NC) -o $(NAME) $(OBJ)
 
 all: $(NAME)
 
-build:
+$(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp

@@ -11,6 +11,7 @@
 # include <ncurses.h>
 # include <sys/ioctl.h>
 # include <cstdio>
+# include <signal.h>
 
 class NCurses: public IMonitorDisplay
 {

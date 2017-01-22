@@ -3,6 +3,7 @@
 # define OSMODULE_HPP
 
 # include <AMonitorModule.hpp>
+# include <sstream>
 
 # include <sys/utsname.h>
 
