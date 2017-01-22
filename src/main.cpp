@@ -4,6 +4,8 @@
 #include <NCurses.hpp>
 
 #include <CPUModule.hpp>
+#include <DateModule.hpp>
+#include <OSModule.hpp>
 #include <UserModule.hpp>
 
 #include <iostream>
@@ -12,6 +14,8 @@
 static int		createModules(std::vector<IMonitorModule*>& modules)
 {
 	modules.push_back(new CPUModule);
+	modules.push_back(new DateModule);
+	modules.push_back(new OSModule);
 	modules.push_back(new UserModule);
 	return 1;
 }

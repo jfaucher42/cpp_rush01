@@ -27,6 +27,13 @@ void	machine_info(void)
 	printf("%s\n", unameData.release);
 	printf("%s\n", unameData.version);
 	printf("%s\n", unameData.machine);
+	/*
+Darwin
+e3r1p1.42.fr
+16.1.0
+Darwin Kernel Version 16.1.0: Wed Oct 19 20:31:56 PDT 2016; root:xnu-3789.21.4~4/RELEASE_X86_64
+x86_64
+	 */
 }
 
 #include <ctime>

@@ -38,6 +38,8 @@ class NCurses: public IMonitorDisplay
 		size_t								_y;
 		size_t								_max_x;
 		size_t								_max_y;
+
+		static const size_t					_titleSize;
 };
 
 #endif

@@ -7,10 +7,11 @@ BASE_SRC = main.cpp \
 \
 		   AMonitorModule.cpp \
 		   CPUModule.cpp \
+		   DateModule.cpp \
+		   OSModule.cpp \
 		   UserModule.cpp \
 \
-		   NCurses.cpp \
-		   Sfml.cpp
+		   NCurses.cpp
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(BASE_SRC:.cpp=.o))
 
@@ -19,7 +20,7 @@ FLAGS_NC = -lncurses
 FLAGS_SFML = -L ~/.brew/lib -lsfml-system -lsfml-window -lsfml-graphics -lsfml-network -lsfml-audio -Wl,-rpath,~/.brew/lib
 
 $(NAME): build $(OBJ)
-	@clang++ $(FLAGS) $(FLAGS_SFML) $(FLAGS_NC) -o $(NAME) $(OBJ)
+	@clang++ $(FLAGS) $(FLAGS_NC) -o $(NAME) $(OBJ)
 
 all: $(NAME)
 

@@ -1,6 +1,6 @@
 #include <NCurses.hpp>
 
-std::ofstream		curse_out("curse");
+const size_t	NCurses::_titleSize = 128;
 
 NCurses::NCurses(std::vector<IMonitorModule*>& modules):
 	_modules(modules)
@@ -38,7 +38,6 @@ NCurses::~NCurses(void)
 {
 	delwin(this->_win);
 	endwin();
-	curse_out.close();
 }
 
 void
@@ -86,7 +85,6 @@ NCurses::_print(const char *str)
 	if (this->_y < this->_max_y)
 	{
 		wprintw(this->_win, "%s\n", str);
-		//curse_out << str << "\n";
 		this->_y++;
 	}
 }
@@ -94,17 +92,16 @@ NCurses::_print(const char *str)
 void
 NCurses::_drawName(std::string const &name)
 {
-	size_t			title_size = 36;
-	size_t			title_position = (title_size - name.size()) / 2;
+	size_t			title_position = (NCurses::_titleSize - name.size()) / 2;
 	std::string		title_border;
 	std::string		title;
 
-	title_border.resize(title_size, '*');
-	title.resize(title_size, ' ');
+	title_border.resize(NCurses::_titleSize, '*');
+	title.resize(NCurses::_titleSize, ' ');
 	title.replace(title_position, name.size(), name);
-	title.resize(36, ' ');
+	title.resize(NCurses::_titleSize, ' ');
 	title[0] = '*';
-	title[title_size - 1] = '*';
+	title[NCurses::_titleSize - 1] = '*';
 	this->_print(title_border.c_str());
 	this->_print(title.c_str());
 	this->_print(title_border.c_str());
