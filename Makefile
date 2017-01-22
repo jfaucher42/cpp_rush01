@@ -24,7 +24,8 @@ FLAGS_NC = -lncurses
 FLAGS_SFML = -L ~/.brew/lib -lsfml-system -lsfml-window -lsfml-graphics -lsfml-network -lsfml-audio -Wl,-rpath,~/.brew/opt/sfml/lib/
 
 $(NAME): $(OBJ_DIR) $(OBJ)
-	@DYLD_LIBRARY_PATH=~/.brew/opt/sfml/lib/ clang++ $(FLAGS) $(FLAGS_SFML) $(FLAGS_NC) -o $(NAME) $(OBJ)
+	@export DYLD_LIBRARY_PATH=~/.brew/opt/sfml/lib/
+	clang++ $(FLAGS) $(FLAGS_SFML) $(FLAGS_NC) -o $(NAME) $(OBJ)
 
 all: $(NAME)
 
