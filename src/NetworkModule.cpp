@@ -6,6 +6,9 @@ NetworkModule::NetworkModule(void):
 	this->_init();
 }
 
+NetworkModule::~NetworkModule(void)
+{}
+
 template<typename T>
 void
 NetworkModule::_get_network_state(s_network_data &network_data, int wanted_list, unsigned char info)
@@ -50,6 +53,18 @@ NetworkModule::updateModule(void)
 	new_data.obytes = 0;
 	new_data.ipackets = 0;
 	new_data.opackets = 0;
+	this->_get_network_state<struct if_msghdr>(new_data, NET_RT_IFLIST, RTM_IFINFO);
+	this->_get_network_state<struct if_msghdr2>(new_data, NET_RT_IFLIST2, RTM_IFINFO2);
+
+	this->_numbers["# of received Kb per s"] = (new_data.ibytes - this->_save.ibytes) / 1024;
+	this->_numbers["# of sent Kb per s"] = (new_data.obytes - this->_save.obytes) / 1024;
+	this->_numbers["# of received packets per s"] = new_data.ipackets - this->_save.ipackets;
+	this->_numbers["# of sent packets per s"] = new_data.opackets - this->_save.opackets;
+
+	this->_save.ibytes = new_data.ibytes;
+	this->_save.obytes = new_data.obytes;
+	this->_save.ipackets = new_data.ipackets;
+	this->_save.opackets = new_data.opackets;
 }
 
 void

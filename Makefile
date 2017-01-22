@@ -8,7 +8,9 @@ BASE_SRC = main.cpp \
 		   AMonitorModule.cpp \
 		   CPUModule.cpp \
 		   DateModule.cpp \
+		   NetworkModule.cpp \
 		   OSModule.cpp \
+		   RAMModule.cpp \
 		   UserModule.cpp \
 \
 		   NCurses.cpp \

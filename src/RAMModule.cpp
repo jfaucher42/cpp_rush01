@@ -6,6 +6,9 @@ RAMModule::RAMModule(void):
 	this->updateModule();
 }
 
+RAMModule::~RAMModule(void)
+{}
+
 static int64_t
 get_used_RAM()
 {
