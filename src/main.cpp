@@ -2,6 +2,7 @@
 #include <IMonitorModule.hpp>
 
 #include <NCurses.hpp>
+#include "Sfml.hpp"
 
 #include <CPUModule.hpp>
 #include <UserModule.hpp>
@@ -35,15 +36,8 @@ int			main(int ac, char **av)
 	std::string		monitorName(av[1]);
 	if (monitorName == "-t")
 		monitor = new NCurses(modules);
-	/*
-	 * else if (monitorName == "-g")
-	 *     monitor = new SFML(modules);
-	 */
-	else
-	{
-		std::cout << "Unhandled option " << monitorName << std::endl;
-		ready = false;
-	}
+	else if (monitorName == "-g")
+		monitor = new Sfml(modules);
 
 	if (ready)
 		monitor->launch();
