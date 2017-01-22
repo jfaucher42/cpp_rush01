@@ -95,30 +95,39 @@ static int					createModules(std::vector<IMonitorModule*>& modules)
 	return modules.size();
 }
 
+static IMonitorDisplay		*get_monitor(std::string option, std::vector<IMonitorModule*>& modules)
+{
+	if (option == "-t")
+		return new NCurses(modules);
+	else if (option == "-g")
+		return new Sfml(modules);
+	else
+	{
+		std::cout << "Unknown option " << option << std::endl;
+		return NULL;
+	}
+}
+
 int			main(int ac, char **av)
 {
 	IMonitorDisplay						*monitor;
 	std::vector<IMonitorModule*>		modules;
-	bool								ready = true;
 
 	if (ac != 2)
 	{
 		std::cout << "./usage <-t | -g>" << std::endl
 				  << "\t-t: interface in terminal" << std::endl
-				  << "\t-g: interface in gui" << std::endl;
+				  << "\t-g: interface in gui" << std::endl
+				  << "\t-b: both" << std::endl;
 		return 0;
 	}
 
 	if (!createModules(modules))
 		return 0;
 
-	std::string		monitorName(av[1]);
-	if (monitorName == "-t")
-		monitor = new NCurses(modules);
-	else if (monitorName == "-g")
-		monitor = new Sfml(modules);
+	monitor = get_monitor(av[1], modules);
 
-	if (ready)
+	if (monitor)
 		monitor->launch();
 
 	for (

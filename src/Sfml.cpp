@@ -1,4 +1,5 @@
 #include "Sfml.hpp"
+#include <NCurses.hpp>
 #include <stdexcept>
 #include <vector>
 #include <thread>
