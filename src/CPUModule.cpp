@@ -6,31 +6,13 @@
 #include <mach/mach_host.h>
 
 CPUModule::CPUModule(void):
-	_name("CPU")
+	AMonitorModule("CPU")
 {
 	this->_init();
 }
 
 CPUModule::~CPUModule()
 {}
-
-std::string const
-CPUModule::getName(void) const
-{
-	return this->_name;
-}
-
-std::map<std::string, std::string> const
-CPUModule::getStrings(void) const
-{
-	return this->_strings;
-}
-
-std::map<std::string, long double> const
-CPUModule::getNumbers(void) const
-{
-	return this->_numbers;
-}
 
 void
 CPUModule::_init(void)
@@ -64,8 +46,8 @@ CPUModule::_get_CPU_load(void)
 	count = HOST_CPU_LOAD_INFO_COUNT;
 	kr = host_statistics(mach_host_self(), HOST_CPU_LOAD_INFO, (int *)&r_load, &count);
 	if (kr != KERN_SUCCESS) {
-		printf("Kernel error\n");
-		return;
+		perror("Kernel error");
+		exit(0);
 	}
 
 	totalSystemTime = r_load.cpu_ticks[CPU_STATE_SYSTEM];

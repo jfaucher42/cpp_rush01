@@ -10,7 +10,7 @@ class IMonitorDisplay
 		// The constructor is supposed to take a std::vector<IMonitorModule*>&
 		virtual ~IMonitorDisplay() {}
 
-		virtual void	refreshMonitor(void) = 0;
+		virtual void	launch(void) = 0;
 };
 
 #endif
