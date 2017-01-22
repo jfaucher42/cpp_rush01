@@ -15,16 +15,84 @@
 #include <iostream>
 #include <fstream>
 
-static int		createModules(std::vector<IMonitorModule*>& modules)
+static IMonitorModule*		CPUModuleCreator(void)
+{ return new CPUModule; }
+
+static IMonitorModule*		DateModuleCreator(void)
+{ return new DateModule; }
+
+static IMonitorModule*		NetworkModuleCreator(void)
+{ return new NetworkModule; }
+
+static IMonitorModule*		OSModuleCreator(void)
+{ return new OSModule; }
+
+static IMonitorModule*		RAMModuleCreator(void)
+{ return new RAMModule; }
+
+static IMonitorModule*		UserModuleCreator(void)
+{ return new UserModule; }
+
+static IMonitorModule*		VMModuleCreator(void)
+{ return new VMModule; }
+
+typedef IMonitorModule* (*moduleCreator)(void);
+
+static int					createModules(std::vector<IMonitorModule*>& modules)
 {
-	modules.push_back(new CPUModule);
-	modules.push_back(new DateModule);
-	modules.push_back(new NetworkModule);
-	modules.push_back(new OSModule);
-	modules.push_back(new RAMModule);
-	modules.push_back(new UserModule);
-	modules.push_back(new VMModule);
-	return 1;
+	std::map<std::string, moduleCreator>	constructors;
+	std::map<std::string, bool>				created;
+
+	constructors["CPU"] = CPUModuleCreator;
+	constructors["Date"] = DateModuleCreator;
+	constructors["Network"] = NetworkModuleCreator;
+	constructors["OS"] = OSModuleCreator;
+	constructors["RAM"] = RAMModuleCreator;
+	constructors["User"] = UserModuleCreator;
+	constructors["VM"] = VMModuleCreator;
+
+	for (
+			std::map<std::string, moduleCreator>::iterator it = constructors.begin();
+			it != constructors.end();
+			it++
+		)
+		created[it->first] = true;
+
+	std::ifstream		config("./modules.config");
+	if (!config.is_open())
+	{
+		std::cout << "Could not open modules.config file" << std::endl;
+		return 0;
+	}
+
+	while (config)
+	{
+		std::string		line;
+
+		config >> line;
+
+		if (line == "")
+			continue;
+
+		if (constructors[line])
+		{
+			if (created[line])
+			{
+				modules.push_back(constructors[line]());
+				created[line] = false;
+			}
+			else
+				std::cout << "Module " << line << " is already present" << std::endl;
+		}
+		else
+		{
+			std::cout << "Bad module " << line << std::endl;
+		}
+	}
+
+	if (!modules.size())
+		std::cout << "No modules to print" << std::endl;
+	return modules.size();
 }
 
 int			main(int ac, char **av)
@@ -41,7 +109,8 @@ int			main(int ac, char **av)
 		return 0;
 	}
 
-	createModules(modules);
+	if (!createModules(modules))
+		return 0;
 
 	std::string		monitorName(av[1]);
 	if (monitorName == "-t")

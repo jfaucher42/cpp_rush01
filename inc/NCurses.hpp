@@ -28,8 +28,8 @@ class NCurses: public IMonitorDisplay
 		NCurses&							operator=(NCurses const&);
 		void								_print(const char*);
 		void								_drawName(std::string const&);
-		void								_drawStrings(std::map<std::string, std::string> const&);
-		void								_drawNumbers(std::map<std::string, long double> const&);
+		template<typename T>
+		void								_drawMap(T const&);
 		void								_updateModules(void);
 
 		std::ofstream						_out;

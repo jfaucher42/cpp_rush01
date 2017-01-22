@@ -25,7 +25,7 @@ CPUModule::_init(void)
 	this->_strings["Active of active core"] = number_to_string(activecpu);
 
 	use_sysctl("hw.cpufrequency", cpufrequency);
-	this->_strings["Frequency (in Ghz)"] = number_to_string(cpufrequency);
+	this->_strings["Frequency (in Ghz)"] = number_to_string(cpufrequency / pow(10, 9));
 
 	use_sysctl("machdep.cpu.brand_string", model, 1024);
 	this->_strings["Model"] = std::string(model);

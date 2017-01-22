@@ -24,7 +24,7 @@ FLAGS_NC = -lncurses
 FLAGS_SFML = -L ~/.brew/lib -lsfml-system -lsfml-window -lsfml-graphics -lsfml-network -lsfml-audio -Wl,-rpath,~/.brew/opt/sfml/lib/
 
 $(NAME): $(OBJ_DIR) $(OBJ)
-	@clang++ $(FLAGS) $(FLAGS_SFML) $(FLAGS_NC) -o $(NAME) $(OBJ)
+	@DYLD_LIBRARY_PATH=~/.brew/opt/sfml/lib/ clang++ $(FLAGS) $(FLAGS_SFML) $(FLAGS_NC) -o $(NAME) $(OBJ)
 
 all: $(NAME)
 
@@ -32,7 +32,7 @@ $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	clang++ $(FLAGS) -o $@ -c $<
+	c++ $(FLAGS) -o $@ -c $<
 
 clean:
 	rm -rf $(OBJ_DIR)
