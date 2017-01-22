@@ -1,7 +1,11 @@
 NAME = ft_gkrellm
 
 BASE_SRC = main.cpp \
+\
+		   AMonitorModule.cpp \
 		   CPUModule.cpp \
+		   UserModule.cpp \
+\
 		   NCurses.cpp
 
 OBJ = $(addprefix obj/, $(BASE_SRC:.cpp=.o))

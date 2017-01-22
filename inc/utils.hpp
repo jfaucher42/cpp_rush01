@@ -16,7 +16,12 @@ int						use_sysctl(const char *name, T& data, size_t fixed = 0)
 		size = fixed;
 	else
 		size = sizeof(T);
-	return sysctlbyname(name, &data, &size, NULL, 0);
+	if (sysctlbyname(name, &data, &size, NULL, 0))
+	{
+		perror("sysctlbyname");
+		exit(0);
+	}
+	return 0;
 }
 
 template<typename T>

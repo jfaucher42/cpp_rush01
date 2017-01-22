@@ -2,50 +2,57 @@
 #include <IMonitorModule.hpp>
 
 #include <NCurses.hpp>
+
 #include <CPUModule.hpp>
+#include <UserModule.hpp>
 
 #include <iostream>
+#include <fstream>
 
-static void		update_modules(std::vector<IMonitorModule*> const &modules)
+static int		createModules(std::vector<IMonitorModule*>& modules)
 {
+	modules.push_back(new CPUModule);
+	modules.push_back(new UserModule);
+	return 1;
+}
+
+int			main(int ac, char **av)
+{
+	IMonitorDisplay						*monitor;
+	std::vector<IMonitorModule*>		modules;
+	bool								ready = true;
+
+	if (ac != 2)
+	{
+		std::cout << "./usage <-t | -g>" << std::endl
+				  << "\t-t: interface in terminal" << std::endl
+				  << "\t-g: interface in gui" << std::endl;
+		return 0;
+	}
+
+	createModules(modules);
+
+	std::string		monitorName(av[1]);
+	if (monitorName == "-t")
+		monitor = new NCurses(modules);
+	/*
+	 * else if (monitorName == "-g")
+	 *     monitor = new SFML(modules);
+	 */
+	else
+	{
+		std::cout << "Unhandled option " << monitorName << std::endl;
+		ready = false;
+	}
+
+	if (ready)
+		monitor->launch();
+
 	for (
-			std::vector<IMonitorModule*>::const_iterator it = modules.begin();
+			std::vector<IMonitorModule*>::iterator it = modules.begin();
 			it != modules.end();
 			it++
 		)
-		reinterpret_cast<IMonitorModule*>(*it)->updateModule();
-}
-
-int				main()
-{
-	std::vector<IMonitorDisplay*>		monitors;
-	std::vector<IMonitorModule*>		modules;
-	time_t								old_time;
-	time_t								actual_time;
-
-	modules.push_back(new CPUModule);
-	monitors.push_back(new NCurses(modules));
-
-	std::time(&old_time);
-	while (monitors.size())
-	{
-		for (
-				std::vector<IMonitorDisplay*>::iterator it = monitors.begin();
-				it != monitors.end();
-				it++
-			)
-		{
-			reinterpret_cast<IMonitorDisplay*>(*it)->refreshMonitor();
-			std::time(&actual_time);
-			if (actual_time != old_time)
-				update_modules(modules);
-		}
-	}
-
-	for (
-			std::vector<IMonitorDisplay*>::iterator it = monitors.begin();
-			it != monitors.end();
-			it++
-		)
 		delete *it;
+	delete monitor;
 }
