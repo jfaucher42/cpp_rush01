@@ -4,11 +4,13 @@ OBJ_DIR = obj
 SRC_DIR = src
 
 BASE_SRC = main.cpp \
+\
 		   AMonitorModule.cpp \
 		   CPUModule.cpp \
-		   NCurses.cpp \
 		   UserModule.cpp \
-			 Sfml.cpp
+\
+		   NCurses.cpp \
+		   Sfml.cpp
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(BASE_SRC:.cpp=.o))
 
