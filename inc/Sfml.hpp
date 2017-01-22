@@ -37,7 +37,7 @@ public:
 	virtual ~Sfml();
 	Sfml & operator=(const Sfml &ref);
 
-	virtual void launch();
+	virtual void launch(void);
 
 	sf::RenderWindow *getWindow() const;
 	sf::Font *getFont() const;
