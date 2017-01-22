@@ -1,5 +1,8 @@
 NAME = ft_gkrellm
 
+OBJ_DIR = obj
+SRC_DIR = src
+
 BASE_SRC = main.cpp \
 \
 		   AMonitorModule.cpp \
@@ -8,7 +11,7 @@ BASE_SRC = main.cpp \
 \
 		   NCurses.cpp
 
-OBJ = $(addprefix obj/, $(BASE_SRC:.cpp=.o))
+OBJ = $(addprefix $(OBJ_DIR)/, $(BASE_SRC:.cpp=.o))
 
 FLAGS = -Wall -Wextra -Werror -I $(shell pwd)/inc/
 
@@ -20,13 +23,13 @@ $(NAME): build $(OBJ)
 all: $(NAME)
 
 build:
-	mkdir -p obj
+	mkdir -p $(OBJ_DIR)
 
-obj/%.o: src/%.cpp
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	clang++ $(FLAGS) -o $@ -c $<
 
 clean:
-	rm -f $(OBJ)
+	rm -rf $(OBJ_DIR)
 
 fclean: clean
 	rm -f $(NAME)
